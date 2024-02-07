@@ -1,0 +1,47 @@
+{% extends 'main/base.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+{% block content %}
+
+{% for post in posts %}
+
+<div class="card mt-3">
+  <div class="card-header">
+    @<strong>{{ post.author.username }}</strong>
+  </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div class="flex-column align-items-start">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.description }}</p>
+      </div>
+      <div class="text-right">
+        {% if user == post.author or perms.main.delete_post %}
+        <form action="" method="POST">
+          {% csrf_token %}
+          <button class="btn btn-danger" name="post-id" value="{{ post.id }}">Delete</button>
+        </form>
+        {% endif %}
+        {% if user.is_staff %}
+        <form method="POST">
+          {% csrf_token %}
+          <button class="btn btn-warning mt-1" value="{{ post.author.id }}" name="user-id">Ban User</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="card-footer text-body-secondary">
+    Created At: {{ post.created_at |date:"M d, Y" }} | Updated At: {{ post.updated_at|date:"M d, Y" }}
+  </div>
+</div>
+
+{% empty %}
+
+NO POSTS YET 😔
+{% endfor %}
+
+
+{% endblock %}
